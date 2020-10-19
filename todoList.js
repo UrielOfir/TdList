@@ -5,36 +5,45 @@ let inputItem = document.querySelector("#item");
 let inputDate = document.querySelector("#date");
 let itemBtn = document.querySelector("#itemBtn");
 
+let tasks=[];
+
+fetch('http://127.0.0.1:8081/')
+  .then(
+    function(response) {
+      if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status Code: ' +
+          response.status);
+        console.log(response.json());
+        return;
+      }
+
+      response.text().then(function (text) {
+        tasks=JSON.parse(text);
+        for (i in tasks) {
+          tasks[i].time = new Date(tasks[i].time);
+        }
+        for (let task in tasks) {
+          viewTask(tasks[task]);
+        }
+      });
+      return tasks;
+     
+     }
+  )
+  .catch(function(err) {
+    console.log('Fetch Error :-S', err);
+  });
+
 function Task(text, time = 0, done = false) {
-  this.id = IDcounter;
-  IDcounter++;
-  localStorage.setItem(`IDcounter`, IDcounter);
+  this.id = 0;
   this.text = text;
   this.time = new Date(time);
   this.done = false;
 }
 
-let tasks = [];
-if (localStorage.getItem(`tasks`) === null)
-  localStorage.setItem(`tasks`, JSON.stringify(tasks));
-tasks = JSON.parse(localStorage.getItem(`tasks`));
-for (i in tasks) {
-  tasks[i].time = new Date(tasks[i].time);
-}
-console.log(tasks);
-
-if (localStorage.getItem(`IDcounter`) === null)
-  localStorage.setItem(`IDcounter`, 0);
-let IDcounter = localStorage.getItem(`IDcounter`);
-
-for (let task in tasks) {
-  viewTask(tasks[task]);
-}
-
 itemBtn.onclick = function () {
   newItemText = inputItem.value;
   newItemDate = inputDate.value;
-  console.log(inputDate.value);
   if (addTask(newItemText, newItemDate)) {
     viewTask(tasks[tasks.length - 1]);
   }
@@ -150,5 +159,14 @@ function viewTask(task) {
 }
 
 function updateServer() {
+  console.log(tasks);
+  fetch(`http://127.0.0.1:8081/`, {
+  method: 'PUT',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(tasks),
+})
   localStorage.setItem(`tasks`, JSON.stringify(tasks));
 }
