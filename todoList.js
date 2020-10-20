@@ -1,5 +1,3 @@
-//localStorage.clear();
-
 let table = document.querySelector("tbody");
 let inputItem = document.querySelector("#item");
 let inputDate = document.querySelector("#date");
@@ -168,5 +166,4 @@ function updateServer() {
   },
   body: JSON.stringify(tasks),
 })
-  localStorage.setItem(`tasks`, JSON.stringify(tasks));
 }

@@ -12,7 +12,7 @@ let tasks= require(`${__dirname}/tasks.json`);
 
 app.put(`/`,function(req,res){
    tasks=req.body;
-   tasks[tasks.length-1].ID=IDcounter.counter;
+   tasks[tasks.length-1].id=IDcounter.counter;
    IDcounter.counter++;
    fs.writeFile(`${__dirname}/IDcounter.json`, JSON.stringify(IDcounter), function (err) {
       if (err) return console.log(err);
